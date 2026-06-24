@@ -2,6 +2,7 @@ import { Link, useFocusEffect, useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAsyncStorage } from "../../hooks/use-async-storage";
 import { useCallback } from "react";
+import { useCurrentLocation } from "../../hooks/use-current-location";
 
 export default function App() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function App() {
     setOnboardingCompleted,
     onboardingCompletedLoading,
   ] = useAsyncStorage("onboardingCompleted", false);
+  const { location, error, loading } = useCurrentLocation();
 
   const clearOnboardingCompleted = () => {
     setOnboardingCompleted(false);
@@ -31,6 +33,11 @@ export default function App() {
           <Text className="text-white text-md font-bold">{"Details"}</Text>
         </TouchableOpacity>
       </Link>
+      <Text className="text-black text-md font-bold">
+        {"latitude: " + location?.coords.latitude + "\n"}
+        {"longitude: " + location?.coords.longitude + "\n"}
+        {"accuracy: " + location?.coords.accuracy + "\n"}
+      </Text>
       <TouchableOpacity onPress={clearOnboardingCompleted}>
         <Text className="text-black text-md font-bold">
           {"Clear Onboarding Completed"}

@@ -2,6 +2,15 @@ import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useAsyncStorage } from "../hooks/use-async-storage";
 import { Slider } from "../components/slider";
+import * as Location from "expo-location";
+
+const requestLocationPermission = async () => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    return false;
+  }
+  return true;
+};
 
 const items = [
   {
@@ -31,7 +40,8 @@ export default function Onboarding() {
     false,
   );
 
-  const onComplete = () => {
+  const onComplete = async () => {
+    await requestLocationPermission();
     setOnboardingCompleted(true);
     router.replace("/");
   };
