@@ -1,21 +1,25 @@
 import { Link, useFocusEffect, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAsyncStorage } from "../../hooks/use-async-storage";
 import { useCallback } from "react";
-import { useCurrentLocation } from "../../hooks/use-current-location";
+import { useGetPosts } from "../../hooks/use-get-posts";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function App() {
   const router = useRouter();
-  const [
-    onboardingCompleted,
-    setOnboardingCompleted,
-    onboardingCompletedLoading,
-  ] = useAsyncStorage("onboardingCompleted", false);
-  const { location, error, loading } = useCurrentLocation();
+  const insets = useSafeAreaInsets();
+  const [onboardingCompleted, _, onboardingCompletedLoading] = useAsyncStorage(
+    "onboardingCompleted",
+    false,
+  );
 
-  const clearOnboardingCompleted = () => {
-    setOnboardingCompleted(false);
-  };
+  const { data, refetch, isRefetching } = useGetPosts();
 
   useFocusEffect(
     useCallback(() => {
@@ -26,23 +30,25 @@ export default function App() {
   );
 
   return (
-    <View className="flex-1 py-8 justify-center items-center gap-4">
-      <Text className="text-black text-2xl font-bold">Home</Text>
-      <Link href="/details/1234" asChild>
-        <TouchableOpacity className="bg-blue-500 px-8 py-4 rounded-md">
-          <Text className="text-white text-md font-bold">{"Details"}</Text>
-        </TouchableOpacity>
-      </Link>
-      <Text className="text-black text-md font-bold">
-        {"latitude: " + location?.coords.latitude + "\n"}
-        {"longitude: " + location?.coords.longitude + "\n"}
-        {"accuracy: " + location?.coords.accuracy + "\n"}
-      </Text>
-      <TouchableOpacity onPress={clearOnboardingCompleted}>
-        <Text className="text-black text-md font-bold">
-          {"Clear Onboarding Completed"}
-        </Text>
-      </TouchableOpacity>
+    <View className="flex-1 bg-red-500" style={{ paddingTop: insets.top }}>
+      <FlatList
+        data={data}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+          />
+        }
+        className="bg-red-500"
+        contentContainerClassName={`gap-4 p-4 pt-20`}
+        renderItem={({ item }) => (
+          <Link href={`/details/${item.id}`} asChild>
+            <TouchableOpacity className="bg-blue-500 px-8 py-4 rounded-md">
+              <Text className="text-white text-md font-bold">{item.title}</Text>
+            </TouchableOpacity>
+          </Link>
+        )}
+      />
     </View>
   );
 }
