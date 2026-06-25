@@ -17,6 +17,13 @@
       ]
     ],
     "name": "YnovTravelApp",
-    "slug": "YnovTravelApp"
+    "slug": "ynov-travel-app",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "46a5d1ff-303b-4067-be09-5e87e63e178e"
+      }
+    },
+    "owner": "anthlasserre"
   }
 }
