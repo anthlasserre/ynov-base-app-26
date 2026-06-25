@@ -9,7 +9,7 @@ export default function Layout() {
         <Icon sf="house.fill" drawable="custom_android_drawable" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="search">
-        <Icon sf="gear" drawable="custom_settings_drawable" />
+        <Icon sf="magnifyingglass" drawable="custom_settings_drawable" />
         <Label>Search</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
