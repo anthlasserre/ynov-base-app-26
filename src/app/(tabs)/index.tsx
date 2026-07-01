@@ -21,7 +21,8 @@ export default function App() {
     false,
   );
 
-  const { data, refetch, isRefetching } = useGetPosts();
+  const { data, refetch, isRefetching, isLoading, isError, error } =
+    useGetPosts();
 
   useFocusEffect(
     useCallback(() => {
@@ -30,6 +31,34 @@ export default function App() {
       }
     }, [onboardingCompleted, onboardingCompletedLoading]),
   );
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 gap-4 p-4 pt-20">
+        {new Array(10).fill(0).map((_, index) => (
+          <Skeleton className="h-[49px]" key={index} />
+        ))}
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="flex-1 justify-center items-center gap-4">
+        <Text className="text-red-500 text-xl font-bold text-center">
+          Error: {error?.message ?? "Unknown error"}
+        </Text>
+        <TouchableOpacity
+          className="bg-blue-500 px-8 py-4 rounded-md"
+          onPress={() => refetch()}
+        >
+          <Text className="text-white text-2xl font-bold text-center">
+            Retry
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
@@ -55,9 +84,9 @@ export default function App() {
         )}
         ListEmptyComponent={
           <View className="flex-1 gap-4">
-            {new Array(10).fill(0).map((_, index) => (
-              <Skeleton className="h-[49px]" key={index} />
-            ))}
+            <Text className="text-black text-2xl font-bold text-center">
+              No data
+            </Text>
           </View>
         }
       />
