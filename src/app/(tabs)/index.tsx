@@ -10,6 +10,8 @@ import { useAsyncStorage } from "../../hooks/use-async-storage";
 import { useCallback } from "react";
 import { useGetPosts } from "../../hooks/use-get-posts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { Skeleton } from "../../components/skeleton";
 
 export default function App() {
   const router = useRouter();
@@ -30,7 +32,7 @@ export default function App() {
   );
 
   return (
-    <View className="flex-1 bg-red-500" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <FlatList
         data={data}
         refreshControl={
@@ -39,15 +41,25 @@ export default function App() {
             onRefresh={() => refetch()}
           />
         }
-        className="bg-red-500"
         contentContainerClassName={`gap-4 p-4 pt-20`}
-        renderItem={({ item }) => (
-          <Link href={`/details/${item.id}`} asChild>
-            <TouchableOpacity className="bg-blue-500 px-8 py-4 rounded-md">
-              <Text className="text-white text-md font-bold">{item.title}</Text>
-            </TouchableOpacity>
-          </Link>
+        renderItem={({ item, index }) => (
+          <Animated.View entering={FadeInDown.delay(index * 80)}>
+            <Link href={`/details/${item.id}`} asChild>
+              <TouchableOpacity className="bg-blue-500 px-8 py-4 rounded-md">
+                <Text className="text-white text-md font-bold">
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            </Link>
+          </Animated.View>
         )}
+        ListEmptyComponent={
+          <View className="flex-1 gap-4">
+            {new Array(10).fill(0).map((_, index) => (
+              <Skeleton className="h-[49px]" key={index} />
+            ))}
+          </View>
+        }
       />
     </View>
   );
